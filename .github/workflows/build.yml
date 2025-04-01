@@ -4,16 +4,15 @@ on: [ pull_request, push ]
 
 jobs:
   build:
-    strategy:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Install GCC
-          run: sudo apt install gcc g++ cmake ninja clang-tidy
-        - name: Run CMake
-          run: cmake -GNinja -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-        - name: Run Clang Tidy
-          run: clang-tidy -format-style=file -header-filter=. -p build
-        - name: Build
-          run: ninja build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install GCC
+        run: sudo apt install gcc g++ cmake ninja clang-tidy
+      - name: Run CMake
+        run: cmake -GNinja -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+      - name: Run Clang Tidy
+        run: clang-tidy -format-style=file -header-filter=. -p build
+      - name: Build
+        run: ninja build
