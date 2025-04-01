@@ -9,7 +9,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install GCC
-        run: sudo apt install gcc g++ cmake ninja clang-tidy
+        run: sudo apt install gcc g++ cmake ninja-build clang-tidy
       - name: Run CMake
         run: cmake -GNinja -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: Run Clang Tidy
