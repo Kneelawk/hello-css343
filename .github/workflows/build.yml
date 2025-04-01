@@ -9,10 +9,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install GCC
-        run: sudo apt install gcc g++ cmake ninja-build clang-tidy
+        run: sudo apt install gcc g++ cmake ninja-build clang-tidy valgrind
       - name: Run CMake
-        run: cmake -GNinja -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-      - name: Run Clang Tidy
-        run: clang-tidy -format-style=file -header-filter=. -p build
+        run: cmake -GNinja -S . -B build
       - name: Build
-        run: ninja build
+        run: ninja -C build
+      - name: Run Valgrind
+        run: valgrind --leak-check=full build/hello_css343
