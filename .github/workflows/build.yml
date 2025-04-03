@@ -9,7 +9,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install GCC
-        run: sudo apt install gcc g++ cmake ninja-build clang-tidy valgrind ctest
+        run: sudo apt install gcc g++ cmake ninja-build clang-tidy valgrind
       - name: Run CMake
         run: cmake -GNinja -S . -B build
       - name: Build
