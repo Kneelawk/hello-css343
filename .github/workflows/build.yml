@@ -14,5 +14,7 @@ jobs:
         run: cmake -GNinja -S . -B build
       - name: Build
         run: ninja -C build
-      - name: Run Valgrind
-        run: valgrind --leak-check=full build/hello_css343 build/hello_css343Test
+      - name: Valgrind Main
+        run: valgrind --leak-check=full build/hello_css343
+      - name: Valgrind Tests
+        run: valgrind --leak-check=full build/hello_css343Test
