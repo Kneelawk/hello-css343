@@ -1,3 +1,13 @@
-/.idea
+# CMake stuff
 /cmake-build-*
 /build
+
+# CLion project files
+/.idea
+*.iml
+*.ipr
+
+# VSCode
+/.vscode
+/.history
+*.visx
