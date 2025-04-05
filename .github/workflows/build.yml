@@ -1,5 +1,8 @@
 name: build
 
+env:
+  PROJECT_NAME: hello_css343
+
 on: [ pull_request, push ]
 
 jobs:
@@ -18,6 +21,6 @@ jobs:
         run: ctest
         working-directory: build
       - name: Valgrind Main
-        run: valgrind --leak-check=full build/hello_css343
+        run: valgrind --leak-check=full build/${{ env.PROJECT_NAME }}
       - name: Valgrind Tests
-        run: valgrind --leak-check=full build/hello_css343Test
+        run: valgrind --leak-check=full build/${{ env.PROJECT_NAME }}Test
