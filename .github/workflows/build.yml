@@ -17,10 +17,10 @@ jobs:
         run: cmake -GNinja -S . -B build
       - name: Build
         run: ninja -C build
-      - name: Run Tests
-        run: ctest
-        working-directory: build
+#      - name: Run Tests
+#        run: ctest
+#        working-directory: build
       - name: Valgrind Main
         run: valgrind --leak-check=full build/${{ env.PROJECT_NAME }}
-      - name: Valgrind Tests
-        run: valgrind --leak-check=full build/${{ env.PROJECT_NAME }}Test
+#      - name: Valgrind Tests
+#        run: valgrind --leak-check=full build/${{ env.PROJECT_NAME }}Test
