@@ -13,6 +13,7 @@
 #ifndef KTEST_HPP
 #define KTEST_HPP
 
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
