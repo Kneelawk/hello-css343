@@ -169,7 +169,11 @@ namespace ktest {
 
     class KTestTest;
 
-    static std::vector<KTestTest> tests;
+    inline std::vector<KTestTest> &getTests() {
+        // avoid static initialization hell
+        static std::vector<KTestTest> tests;
+        return tests;
+    }
 
     class KTestTest {
         std::string name_;
@@ -179,7 +183,7 @@ namespace ktest {
         KTestTest(const std::string &name, const std::function<void()> &fn)
             : name_(name),
               fn_(fn) {
-            tests.push_back(*this);
+            getTests().push_back(*this);
         }
 
         KTestTest(const KTestTest &other) = default;
@@ -236,7 +240,7 @@ namespace ktest {
 
         size_t failedTests = 0;
         size_t passedTests = 0;
-        for (const auto &test: tests) {
+        for (const auto &test: getTests()) {
             std::cout << "Running test: \033[1;36m" << test.name() << "\033[0m" << std::endl;
             if (shouldFork) {
                 const pid_t child = fork();
