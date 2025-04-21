@@ -25,6 +25,8 @@
 #include <typeinfo>
 
 namespace ktest {
+    // ---- Assertion Setup Code ---- //
+
     class KAssertionError final : public std::exception {
     public:
         KAssertionError() = default;
@@ -75,24 +77,81 @@ namespace ktest {
         }
     };
 
-/// Base assertion. This takes a description expression and a check expression.
-#define KASSERT_BASE(desc, check) \
-    if (const ::ktest::KAssertionResult res = ::ktest::KAssertionResult((::std::stringstream() << desc).str(), (check))); \
+
+    // ---- Actual Assertions ---- //
+
+    /// Base assertion. This takes a description expression and a check expression.
+#define KTEST_KASSERT_BASE(resx) \
+    if (const ::ktest::KAssertionResult res = (resx)); \
     else ::ktest::KAssertionHelper(res.msg(), __FILE__, __LINE__) = std::stringstream()
 
-/// Asserts that an expression results in 'true'.
-#define KASSERT_TRUE(check) KASSERT_BASE("ASSERT_TRUE - Expected the following to be true:\n  '" << #check << "': " << (check), check)
+#define KTEST_KASSERT_RES_BASE(desc, check) ::ktest::KAssertionResult((::std::stringstream() << desc).str(), (check))
 
-/// Asserts that an expression results in 'false'.
-#define KASSERT_FALSE(check) KASSERT_BASE("ASSERT_FALSE - Expected the following to be false:\n  '" << #check << "': " << (check), !(check))
+    inline KAssertionResult ktest_assert_true(const std::string &checkStr, const bool check) {
+        return KTEST_KASSERT_RES_BASE("ASSERT_TRUE - Expected the following to be true:\n  '" << checkStr << "': " << check,
+                                 check);
+    }
 
-/// Asserts that two expressions are equal.
-#define KASSERT_EQ(expected, actual) KASSERT_BASE("ASSERT_EQ - Expected the following to be equal:\n  '" << #expected << "': " << (expected) << "\n  '" << #actual << "': " << (actual), (expected) == (actual))
+    /// Asserts that an expression results in 'true'.
+#define KASSERT_TRUE(check) KTEST_KASSERT_BASE(::ktest::ktest_assert_true(#check, (check)))
 
-/// Asserts that two expressions are equal.
-#define KASSERT_NE(expected, actual) KASSERT_BASE("ASSERT_NE - Expected the following to be not equal:\n  '" << #expected << "': " << (expected) << "\n  '" << #actual << "': " << (actual), (expected) != (actual))
+    inline KAssertionResult ktest_assert_false(const std::string &checkStr, const bool check) {
+        return KTEST_KASSERT_RES_BASE(
+            "ASSERT_FALSE - Expected the following to be false:\n  '" << checkStr << "': " << check, !check);
+    }
 
-/// Asserts that a block throws an exception. Takes the expected exception type, the captures into the thrower block, and the thrower block itself.
+    /// Asserts that an expression results in 'false'.
+#define KASSERT_FALSE(check) KTEST_KASSERT_BASE(::ktest::ktest_assert_false(#check, (check)))
+
+    template<typename E, typename A>
+    KAssertionResult ktest_assert_eq(const std::string &expectedStr, const std::string &actualStr, const E &expected, const A &actual) {
+        return KTEST_KASSERT_RES_BASE("ASSERT_EQ - Expected the following to be equal:\n  '" << expectedStr << "': " << expected << "\n  '" << actualStr << "': " << actual, expected == actual);
+    }
+
+    /// Asserts that two expressions are equal.
+#define KASSERT_EQ(expected, actual) KTEST_KASSERT_BASE(::ktest::ktest_assert_eq(#expected, #actual, (expected), (actual)))
+
+    template<typename E, typename A>
+    KAssertionResult ktest_assert_ne(const std::string &expectedStr, const std::string &actualStr, const E &expected, const A &actual) {
+        return KTEST_KASSERT_RES_BASE("ASSERT_NE - Expected the following to be not equal:\n  '" << expectedStr << "': " << expected << "\n  '" << actualStr << "': " << actual, expected != actual);
+    }
+
+    /// Asserts that two expressions are equal.
+#define KASSERT_NE(expected, actual) KTEST_KASSERT_BASE(::ktest::ktest_assert_ne(#expected, #actual, (expected), (actual)))
+
+    template<typename A, typename B>
+    KAssertionResult ktest_assert_gt(const std::string &aStr, const std::string &bStr, const A &a, const B &b) {
+        return KTEST_KASSERT_RES_BASE("ASSERT_GT - Expected the following 'a' to be greater than 'b':\n  a: '" << aStr << "': " << a << "\n  b: '" << bStr << "': " << b, a > b);
+    }
+
+    /// Asserts that two expressions are equal.
+#define KASSERT_GT(a, b) KTEST_KASSERT_BASE(::ktest::ktest_assert_gt(#a, #b, (a), (b)))
+
+    template<typename A, typename B>
+    KAssertionResult ktest_assert_ge(const std::string &aStr, const std::string &bStr, const A &a, const B &b) {
+        return KTEST_KASSERT_RES_BASE("ASSERT_GT - Expected the following 'a' to be greater than or equal to 'b':\n  a: '" << aStr << "': " << a << "\n  b: '" << bStr << "': " << b, a >= b);
+    }
+
+    /// Asserts that two expressions are equal.
+#define KASSERT_GE(a, b) KTEST_KASSERT_BASE(::ktest::ktest_assert_ge(#a, #b, (a), (b)))
+
+    template<typename A, typename B>
+    KAssertionResult ktest_assert_lt(const std::string &aStr, const std::string &bStr, const A &a, const B &b) {
+        return KTEST_KASSERT_RES_BASE("ASSERT_GT - Expected the following 'a' to be less than 'b':\n  a: '" << aStr << "': " << a << "\n  b: '" << bStr << "': " << b, a < b);
+    }
+
+    /// Asserts that two expressions are equal.
+#define KASSERT_LT(a, b) KTEST_KASSERT_BASE(::ktest::ktest_assert_lt(#a, #b, (a), (b)))
+
+    template<typename A, typename B>
+    KAssertionResult ktest_assert_le(const std::string &aStr, const std::string &bStr, const A &a, const B &b) {
+        return KTEST_KASSERT_RES_BASE("ASSERT_GT - Expected the following 'a' to be less than or equal to 'b':\n  a: '" << aStr << "': " << a << "\n  b: '" << bStr << "': " << b, a <= b);
+    }
+
+    /// Asserts that two expressions are equal.
+#define KASSERT_LE(a, b) KTEST_KASSERT_BASE(::ktest::ktest_assert_le(#a, #b, (a), (b)))
+
+    /// Asserts that a block throws an exception. Takes the expected exception type, the captures into the thrower block, and the thrower block itself.
 #define KASSERT_THROWS(expected, captures, thrower) \
     if (const ::ktest::KAssertionResult res = captures { \
         try thrower \
@@ -104,6 +163,9 @@ namespace ktest {
         return ::ktest::KAssertionResult((::std::stringstream() << "ASSERT_THROWS - Expected the exception '" << #expected << "' to be thrown by the following code:\n  " << #thrower << "\nbut no exception was thrown.").str(), false); \
     }()); \
     else ::ktest::KAssertionHelper(res.msg(), __FILE__, __LINE__) = std::stringstream()
+
+
+    // ---- Test Collector Code ---- //
 
     class KTestTest;
 
@@ -162,6 +224,10 @@ namespace ktest {
     static __KTest_##name __ktest_##name; \
     void __ktest_fn_##name()
 
+
+    // ---- Test Runner Code ---- //
+
+    /// Run all auto-registered tests.
     inline void runAllTests() {
         const char *forkEnv = std::getenv("KTEST_FORK");
         const bool shouldFork = forkEnv != nullptr && !std::strcmp(forkEnv, "1");
