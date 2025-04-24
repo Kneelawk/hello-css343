@@ -18,11 +18,15 @@
 #include <sstream>
 #include <vector>
 #include <functional>
-#include <unistd.h>
 #include <cerrno>
 #include <cstring>
-#include <sys/wait.h>
 #include <typeinfo>
+
+// this stuff is posix-only
+#ifdef __unix__
+#include <unistd.h>
+#include <sys/wait.h>
+#endif
 
 namespace ktest {
     // ---- Assertion Setup Code ---- //
@@ -233,8 +237,10 @@ namespace ktest {
 
     /// Run all auto-registered tests.
     inline void runAllTests() {
+#ifdef __unix__
         const char *forkEnv = std::getenv("KTEST_FORK");
         const bool shouldFork = forkEnv != nullptr && !std::strcmp(forkEnv, "1");
+#endif
         const char *exitEnv = std::getenv("KTEST_EXIT");
         const bool shouldExit = exitEnv != nullptr && !std::strcmp(exitEnv, "1");
 
@@ -242,6 +248,7 @@ namespace ktest {
         size_t passedTests = 0;
         for (const auto &test: getTests()) {
             std::cout << "Running test: \033[1;36m" << test.name() << "\033[0m" << std::endl;
+#ifdef __unix__
             if (shouldFork) {
                 const pid_t child = fork();
                 if (child == 0) {
@@ -279,6 +286,7 @@ namespace ktest {
                     }
                 }
             } else {
+#endif
                 try {
                     test();
                     std::cout << "Test \033[1;36m" << test.name() << "\033[0m \033[1;32mpassed\033[0m." << std::endl;
@@ -288,7 +296,9 @@ namespace ktest {
                     ++failedTests;
                 }
             }
+#ifdef __unix__
         }
+#endif
 
         std::cout << "\033[1m## TEST RESULTS ##\033[0m" << std::endl;
         std::cout << "  Tests passed: " << passedTests << std::endl;
