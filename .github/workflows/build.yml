@@ -19,7 +19,8 @@ jobs:
       - name: Run CMake
         run: cmake -G'Unix Makefiles' -S . -B build
       - name: Build
-        run: ninja -C build
+        run: make
+        working-directory: build
       - name: Run Program
         run: build/${{ env.PROJECT_NAME }}
         env:
