@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.26.5)
 project(hello_css343)
 
 set(MAIN_EXECUTABLE_NAME "${PROJECT_NAME}")
