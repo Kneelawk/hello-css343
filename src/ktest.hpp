@@ -71,10 +71,11 @@ namespace ktest {
               line(line) {
         }
 
-        KAssertionHelper &operator=(const std::stringstream &str) const {
+        KAssertionHelper &operator=(const std::ostream &ostr) const {
             // we use the '=' operator because that takes the lowest precedence while still being an infix operator.
             std::cout << filepath << ":" << line << ": Assertion Failure" << std::endl;
             std::cout << msg << std::endl;
+            const auto &str = dynamic_cast<const std::stringstream&>(ostr);
             if (str.rdbuf()->in_avail())
                 std::cout << "    " << str.str() << std::endl;
             throw KAssertionError();
