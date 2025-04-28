@@ -87,8 +87,8 @@ namespace ktest {
 
     /// Base assertion. This takes a description expression and a check expression.
 #define KTEST_KASSERT_BASE(resx) \
-    if (const ::ktest::KAssertionResult res = (resx)); \
-    else ::ktest::KAssertionHelper(res.msg(), __FILE__, __LINE__) = std::stringstream()
+    if (const ::ktest::KAssertionResult __ktest_res = (resx)); \
+    else ::ktest::KAssertionHelper(__ktest_res.msg(), __FILE__, __LINE__) = std::stringstream()
 
 #define KTEST_KASSERT_RES_BASE(desc, check) \
     ::std::stringstream ss; \
