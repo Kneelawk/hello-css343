@@ -32,7 +32,6 @@ jobs:
       - name: Valgrind Main
         run: valgrind --leak-check=full build/${{ env.PROJECT_NAME }}
         env:
-          KTEST_FORK: 1
           KTEST_EXIT: 1
 #      - name: Valgrind Tests
 #        run: valgrind --leak-check=full build/${{ env.PROJECT_NAME }}Test
